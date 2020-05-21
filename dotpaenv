@@ -1,0 +1,5 @@
+# generate API key:
+# curl -k -X GET 'https://<server>/api/?type=keygen&user=<user>&password=<password>'
+API_KEY=<api_key>
+SERVER=<server>
+
