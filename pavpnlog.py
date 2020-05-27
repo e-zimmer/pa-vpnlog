@@ -60,14 +60,18 @@ def get_job(jobId, server=server, api_key=api_key, counter=0, skip=None):
     r = requests.get(URL, params=payload, headers=headers, verify=False)
     logging.info(f"Got result: {r}")
     status, max_count, count = job_status(r.text)
-    logging.info(f"Max count: {max_count}")
-    logging.info(f"Count: {count}")
-    logging.info(f"Counter: {counter}")
+    logging.info(f"Job status: {status}")
+    logging.info(f"Max count: {max_count} Type: {type(max_count)}")
+    logging.info(f"Count: {count} Type: {type(count)}")
+    logging.info(f"Counter: {counter} Type: {type(counter)}")
     if status != 'FIN':
         get_job(jobId)
-    if counter != max_count:
+    elif counter != max_count:
+        logging.info("No match")
         parse_xml(r.text)
         get_job(jobId, skip=count, counter=counter + count)
+    else:
+        logging.info("Completed export")
 
 def job_status(result):
     #logging.info(f"Getting job status: {result}")
@@ -79,7 +83,6 @@ def job_status(result):
     if root.attrib['status'] == "success":
         for response in root.iter("status"):
             status = response.text
-            logging.info(f"Job status: {status}")
     return status, max_count, count
 
 def delete_job(jobId, server=server, api_key=api_key):
