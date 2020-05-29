@@ -16,11 +16,12 @@ cp dotpaenv .paenv
 ### Usage & Examples
 `pavpnlog.py` gather client connection data
 ```
-usage: pavpnlog.py [-h] [-v]
+usage: pavpnlog.py [-h] [-v] [-d]
 
 Select options.
 
 optional arguments:
   -h, --help     show this help message and exit
   -v, --verbose  verbose
+  -d, --debug    debug
 ```
