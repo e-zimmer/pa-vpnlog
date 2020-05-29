@@ -42,7 +42,7 @@ def parse_jobId(result):
     root = ET.fromstring(result)
     for result in root.findall("result"):
         jobId = result.find('job').text
-        logging.debug(f"Got jobId: {jobId}")
+        logging.info(f"Got jobId: {jobId}")
     return jobId
 
 def get_job(jobId, server=server, api_key=api_key, counter=0, skip=None):
@@ -71,7 +71,7 @@ def get_job(jobId, server=server, api_key=api_key, counter=0, skip=None):
         parse_xml(r.text)
         get_job(jobId, skip=count, counter=counter + count)
     else:
-        logging.info("Completed export")
+        print(f"Completed export {max_count} records")
 
 def job_status(result):
     #logging.info(f"Getting job status: {result}")
@@ -86,7 +86,7 @@ def job_status(result):
     return status, max_count, count
 
 def delete_job(jobId, server=server, api_key=api_key):
-    logging.debug(f"Deleting job: {jobId}")
+    logging.info(f"Deleting job: {jobId}")
     payload = {
         'type': 'log',
         'action': 'finish',
@@ -153,13 +153,18 @@ if __name__ == "__main__":
     required = parser.add_argument_group('required arguments')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help="verbose")
+    parser.add_argument('-d', '--debug', action='store_true',
+                        help="debug")
+
     #parser.add_argument('-f', metavar='file', type=str,
     #                    help="File to import")
 
     args = parser.parse_args()
 
-    logging.getLogger().setLevel(logging.INFO)
     if args.verbose:
+        logging.getLogger().setLevel(logging.INFO)
+
+    if args.debug:
         logging.getLogger().setLevel(logging.DEBUG)
 
     #read_file(args.infile)
