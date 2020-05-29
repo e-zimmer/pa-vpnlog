@@ -34,7 +34,7 @@ def get_system_log(server=server, api_key=api_key):
     }
     URL = f"https://{server}/api"
     r = requests.get(URL, params=payload, headers=headers, verify=False)
-    logging.info(f"Got URL: {r.url}")
+    logging.debug(f"Got URL: {r.url}")
     return r
 
 def parse_jobId(result):
@@ -42,11 +42,11 @@ def parse_jobId(result):
     root = ET.fromstring(result)
     for result in root.findall("result"):
         jobId = result.find('job').text
-        logging.info(f"Got jobId: {jobId}")
+        logging.debug(f"Got jobId: {jobId}")
     return jobId
 
 def get_job(jobId, server=server, api_key=api_key, counter=0, skip=None):
-    logging.info(f"Getting job output: {jobId}")
+    logging.debug(f"Getting job output: {jobId}")
     payload = {
         'type': 'log',
         'action': 'get',
@@ -58,16 +58,16 @@ def get_job(jobId, server=server, api_key=api_key, counter=0, skip=None):
     }
     URL = f"https://{server}/api"
     r = requests.get(URL, params=payload, headers=headers, verify=False)
-    logging.info(f"Got result: {r}")
+    logging.debug(f"Got result: {r}")
     status, max_count, count = job_status(r.text)
-    logging.info(f"Job status: {status}")
-    logging.info(f"Max count: {max_count} Type: {type(max_count)}")
-    logging.info(f"Count: {count} Type: {type(count)}")
-    logging.info(f"Counter: {counter} Type: {type(counter)}")
+    logging.debug(f"Job status: {status}")
+    logging.debug(f"Max count: {max_count} Type: {type(max_count)}")
+    logging.debug(f"Count: {count} Type: {type(count)}")
+    logging.debug(f"Counter: {counter} Type: {type(counter)}")
     if status != 'FIN':
         get_job(jobId)
     elif counter != max_count:
-        logging.info("No match")
+        logging.debug("No match")
         parse_xml(r.text)
         get_job(jobId, skip=count, counter=counter + count)
     else:
@@ -86,7 +86,7 @@ def job_status(result):
     return status, max_count, count
 
 def delete_job(jobId, server=server, api_key=api_key):
-    logging.info(f"Deleting job: {jobId}")
+    logging.debug(f"Deleting job: {jobId}")
     payload = {
         'type': 'log',
         'action': 'finish',
@@ -97,7 +97,7 @@ def delete_job(jobId, server=server, api_key=api_key):
     }
     URL = f"https://{server}/api"
     r = requests.get(URL, params=payload, headers=headers, verify=False)
-    logging.info(f"Deleted: {r.text}")
+    logging.debug(f"Deleted: {r.text}")
     return r
 
 def read_file(path):
@@ -158,8 +158,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    logging.getLogger().setLevel(logging.INFO)
     if args.verbose:
-        logging.getLogger().setLevel(logging.INFO)
+        logging.getLogger().setLevel(logging.DEBUG)
 
     #read_file(args.infile)
     result = get_system_log()
