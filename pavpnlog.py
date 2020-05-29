@@ -7,6 +7,7 @@ import os
 from py_dotenv import read_dotenv
 import re
 import requests
+import sys
 import time
 import urllib3
 urllib3.disable_warnings()
@@ -18,9 +19,6 @@ api_key = os.getenv('API_KEY')
 server = os.getenv('SERVER')
 tstamp = datetime.now()
 newfile = f"PAVPN-log-{tstamp}.csv"
-qdate = (tstamp - timedelta(days=7)).strftime("%Y/%m/%d")
-query_time = f"receive_time geq '{qdate} 08:00:00'"
-
 
 def get_system_log(server=server, api_key=api_key):
     payload = {
@@ -151,6 +149,8 @@ if __name__ == "__main__":
     logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(message)s')
     parser = ArgumentParser(description='Select options.')
     required = parser.add_argument_group('required arguments')
+    parser.add_argument('-D', '--days', type=int,
+                        help="Number of days to gather (Max 7) Default: 7")
     parser.add_argument('-v', '--verbose', action='store_true',
                         help="verbose")
     parser.add_argument('-d', '--debug', action='store_true',
@@ -160,6 +160,18 @@ if __name__ == "__main__":
     #                    help="File to import")
 
     args = parser.parse_args()
+
+    if args.days:
+        if args.days > 0 and args.days <= 7:
+            days = args.days
+        else:
+            print("Days must be between 1 and 7")
+            sys.exit()
+    else:
+        days = 7
+
+    qdate = (tstamp - timedelta(days=days)).strftime("%Y/%m/%d")
+    query_time = f"receive_time geq '{qdate} 08:00:00'"
 
     if args.verbose:
         logging.getLogger().setLevel(logging.INFO)

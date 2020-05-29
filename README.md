@@ -16,12 +16,13 @@ cp dotpaenv .paenv
 ### Usage & Examples
 `pavpnlog.py` gather client connection data
 ```
-usage: pavpnlog.py [-h] [-v] [-d]
+usage: pavpnlog.py [-h] [-D DAYS] [-v] [-d]
 
 Select options.
 
 optional arguments:
-  -h, --help     show this help message and exit
-  -v, --verbose  verbose
-  -d, --debug    debug
+  -h, --help            show this help message and exit
+  -D DAYS, --days DAYS  Number of days to gather (Max 7) Default: 7
+  -v, --verbose         verbose
+  -d, --debug           debug
 ```
