@@ -118,17 +118,18 @@ def parse_xml(result):
     nroot = ET.fromstring(result)
     for e in nroot.iter(tag='entry'):
         r_time = [e.find('receive_time').text]
-        client_info = parse_line(e.find('opaque').text)
+        status = [e.find('eventid').text]
+        client_info = parse_line(e.find('opaque').text, status[0])
         dev_name = [e.find('device_name').text]
         client_info = (r_time + client_info + dev_name)
         write_file(client_info)
 
-def parse_line(line):
+def parse_line(line, status):
     client = []
-    if "succ" in line[8]:
-        status = "start"
+    if "succ" in status:
+        c_status = "start"
     else:
-        status = "stop"
+        c_status = "stop"
     user = re.search('(?<=User name: )\w*', line)
     ipaddr = re.search('(?<=Private IP: )(?:.*?\,)', line)
     cli_ver = re.search('(?<=Client version: )(?:.*?,)', line)
@@ -136,7 +137,7 @@ def parse_line(line):
     os_ver = re.search('(?<=Client OS version: )(?:.*?VPN)', line)
     client = [
               user.group(0),
-              status,
+              c_status,
               ipaddr.group(0)[:-1],
               cli_ver.group(0)[:-1],
               dev_name.group(0)[:-1],
