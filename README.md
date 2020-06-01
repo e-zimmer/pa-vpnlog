@@ -3,7 +3,7 @@ Palo Alto VPN log grabber
 
 Grabs past 7 days of user logs for VPN connect/disconnect and outputs CSV of data
 
-## Clone and setup
+### Clone and setup
 
 ```bash
 git clone https://github.com/e-zimmer/pa-vpnlog && cd pa-vpnlog
@@ -13,7 +13,13 @@ python -m pip install -r requirements.txt
 cp dotpaenv .paenv  
 ```
 
-### Usage & Examples
+### Generate API key
+
+```bash 
+curl -k -X GET 'https://<server>/api/?type=keygen&user=<user>&password=<password>'
+```
+
+## Usage & Examples
 `pavpnlog.py` gather client connection data
 ```
 usage: pavpnlog.py [-h] [-D DAYS] [-v] [-d]
